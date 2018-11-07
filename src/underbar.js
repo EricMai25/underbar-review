@@ -235,7 +235,16 @@
   // provided, provide a default one
   _.some = function(collection, iterator) {
     // TIP: There's a very clever way to re-use every() here.
-    return _.every(collection, iterator)
+    if (!iterator) {
+      iterator = _.identity;
+    }
+    if (_.every(collection, iterator) === true) {
+      return true;
+    } else {
+      return false;
+    }
+    
+    
   };
 
 
@@ -276,7 +285,7 @@
     for (var i = 1; i < arguments.length; i++) {
       for (var key in arguments[i]) {
         
-        if(!obj[key]) {
+        if (!obj.hasOwnProperty(key)) {
           obj[key] = arguments[i][key]; 
         }
       }
@@ -326,6 +335,32 @@
   // already computed the result for the given argument and return that value
   // instead if possible.
   _.memoize = function(func) {
+    // obj for storing to contain past calls of memo
+    var tested; 
+    var alreadyCalled = false;
+    var result;
+    
+    // memoSpy(10)  false - true
+    // memoSpy(10)
+    //contains the keys for past invocations
+    return function() {
+      if (tested === JSON.stringify(arguments)) {
+        alreadyCalled = true;
+      }
+      if (!alreadyCalled) {
+        result = func.apply(this, arguments);
+        tested = JSON.stringify(arguments);
+      }
+      return result;
+
+
+
+      //if the specific argument is in the object dont return function
+    };
+
+    //values will be the result of the calls
+       
+      
   };
 
   // Delays a function for the given number of milliseconds, and then calls
@@ -335,6 +370,17 @@
   // parameter. For example _.delay(someFunction, 500, 'a', 'b') will
   // call someFunction('a', 'b') after 500ms
   _.delay = function(func, wait) {
+
+  // var args = [...arguments]
+  // arg.slice(2) 
+    var args = Array.prototype.slice.call(arguments);
+    
+    args = args.slice(2);
+
+    setTimeout(function() {
+      return func.apply(null, args);
+    }, wait);
+  
   };
 
 
@@ -349,6 +395,9 @@
   // input array. For a tip on how to make a copy of an array, see:
   // http://mdn.io/Array.prototype.slice
   _.shuffle = function(array) {
+    var arr = array.slice(0);
+    var ran = Math.floor(Math.random() * Math.floor(array.length-1));
+    
   };
 
 
